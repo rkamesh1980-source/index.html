@@ -8,13 +8,13 @@ let suits = cards.map(c => c[1])
 let rankCount={}
 let suitCount={}
 
-for(let r of ranks){
+ranks.forEach(r=>{
 rankCount[r]=(rankCount[r]||0)+1
-}
+})
 
-for(let s of suits){
+suits.forEach(s=>{
 suitCount[s]=(suitCount[s]||0)+1
-}
+})
 
 let values=Object.values(rankCount)
 
@@ -33,10 +33,21 @@ return "High Card"
 
 function simulate(){
 
-let hand=document.getElementById("hand").value.split(" ")
-let flop=document.getElementById("flop").value.split(" ")
-let turn=document.getElementById("turn").value? [document.getElementById("turn").value]:[]
-let river=document.getElementById("river").value? [document.getElementById("river").value]:[]
+let handInput=document.getElementById("hand").value.trim()
+let flopInput=document.getElementById("flop").value.trim()
+let turnInput=document.getElementById("turn").value.trim()
+let riverInput=document.getElementById("river").value.trim()
+
+if(!handInput){
+document.getElementById("equity").innerHTML="Enter your cards"
+return
+}
+
+let hand=handInput.split(" ")
+
+let flop=flopInput? flopInput.split(" ") : []
+let turn=turnInput? [turnInput] : []
+let river=riverInput? [riverInput] : []
 
 let cards=[...hand,...flop,...turn,...river]
 
