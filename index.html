@@ -1,111 +1,34 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Poker AI Pro</title>
-
-<style>
-body{
-font-family:Arial;
-background:#062f25;
-color:white;
-text-align:center;
-padding:20px;
-}
-
-.card{
-background:#0c4d3a;
-padding:20px;
-border-radius:10px;
-margin-top:20px;
-}
-
-input{
-padding:10px;
-margin:8px;
-width:220px;
-border-radius:6px;
-border:none;
-}
-
-button{
-padding:12px 25px;
-background:#ffd000;
-border:none;
-border-radius:8px;
-font-size:16px;
-cursor:pointer;
-}
-
-.result{
-margin-top:20px;
-font-size:22px;
-font-weight:bold;
-}
-</style>
-</head>
-
-<body>
-
-<h1>♠ Poker AI Pro</h1>
-
-<div class="card">
-
-<div>
-<label>Your Cards</label><br>
-<input id="hand" placeholder="Ah Kh">
-</div>
-
-<div>
-<label>Flop</label><br>
-<input id="flop" placeholder="Qs Jh 2d">
-</div>
-
-<div>
-<label>Turn</label><br>
-<input id="turn" placeholder="9c">
-</div>
-
-<div>
-<label>River</label><br>
-<input id="river" placeholder="optional">
-</div>
-
-<div>
-<label>Number of Opponents</label><br>
-<input id="players" type="number" value="1">
-</div>
-
-<button onclick="simulate()">Calculate Winning Chance</button>
-
-<div class="result" id="equity"></div>
-<div class="result" id="advice"></div>
-
-</div>
-
 <script>
 
-const ranks = "23456789TJQKA".split("");
-const suits = "shdc".split("");
+function evaluateHand(cards){
 
-function buildDeck(){
-let deck=[]
+let ranks = cards.map(c => c[0])
+let suits = cards.map(c => c[1])
+
+let rankCount={}
+let suitCount={}
+
 for(let r of ranks){
+rankCount[r]=(rankCount[r]||0)+1
+}
+
 for(let s of suits){
-deck.push(r+s)
-}
-}
-return deck
+suitCount[s]=(suitCount[s]||0)+1
 }
 
-function removeCard(deck,card){
-let i=deck.indexOf(card)
-if(i>-1) deck.splice(i,1)
-}
+let values=Object.values(rankCount)
 
-function randomCard(deck){
-let i=Math.floor(Math.random()*deck.length)
-return deck.splice(i,1)[0]
+if(values.includes(4)) return "Four of a Kind"
+if(values.includes(3) && values.includes(2)) return "Full House"
+if(Object.values(suitCount).includes(5)) return "Flush"
+if(values.includes(3)) return "Three of a Kind"
+
+let pairs=values.filter(v=>v==2).length
+
+if(pairs>=2) return "Two Pair"
+if(pairs==1) return "Pair"
+
+return "High Card"
 }
 
 function simulate(){
@@ -114,66 +37,23 @@ let hand=document.getElementById("hand").value.split(" ")
 let flop=document.getElementById("flop").value.split(" ")
 let turn=document.getElementById("turn").value? [document.getElementById("turn").value]:[]
 let river=document.getElementById("river").value? [document.getElementById("river").value]:[]
-let opponents=parseInt(document.getElementById("players").value)
 
-let board=[...flop,...turn,...river]
+let cards=[...hand,...flop,...turn,...river]
 
-let trials=10000
-let wins=0
+let strength=evaluateHand(cards)
 
-for(let t=0;t<trials;t++){
+let advice="FOLD"
 
-let deck=buildDeck()
+if(strength=="Four of a Kind") advice="RAISE BIG"
+else if(strength=="Full House") advice="RAISE"
+else if(strength=="Flush") advice="RAISE"
+else if(strength=="Three of a Kind") advice="CALL"
+else if(strength=="Two Pair") advice="CALL"
+else if(strength=="Pair") advice="CHECK/CALL"
 
-for(let c of [...hand,...board]){
-removeCard(deck,c)
-}
-
-let boardSim=[...board]
-
-while(boardSim.length<5){
-boardSim.push(randomCard(deck))
-}
-
-let heroScore=Math.random()
-
-let lose=false
-
-for(let o=0;o<opponents;o++){
-
-let opp=[randomCard(deck),randomCard(deck)]
-
-let oppScore=Math.random()
-
-if(oppScore>heroScore){
-lose=true
-break
-}
-
-}
-
-if(!lose) wins++
-
-}
-
-let equity=(wins/trials*100).toFixed(1)
-
-document.getElementById("equity").innerHTML=
-"Win Probability: "+equity+"%"
-
-let move="FOLD"
-
-if(equity>65) move="RAISE"
-else if(equity>40) move="CALL"
-else move="FOLD"
-
-document.getElementById("advice").innerHTML=
-"Recommended Move: "+move
+document.getElementById("equity").innerHTML="Hand Strength: "+strength
+document.getElementById("advice").innerHTML="Recommended Move: "+advice
 
 }
 
 </script>
-
-</body>
-</html>
-	◦	
