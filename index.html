@@ -1,70 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poker AI</title>
+</head>
+
+<body style="font-family:Arial;text-align:center;margin-top:50px;">
+
+<h1>Poker AI Running</h1>
+<p>Your deployment is working.</p>
+
+<button onclick="test()">Test Button</button>
+
+<p id="result"></p>
+
 <script>
-
-function evaluateHand(cards){
-
-let ranks = cards.map(c => c[0])
-let suits = cards.map(c => c[1])
-
-let rankCount={}
-let suitCount={}
-
-ranks.forEach(r=>{
-rankCount[r]=(rankCount[r]||0)+1
-})
-
-suits.forEach(s=>{
-suitCount[s]=(suitCount[s]||0)+1
-})
-
-let values=Object.values(rankCount)
-
-if(values.includes(4)) return "Four of a Kind"
-if(values.includes(3) && values.includes(2)) return "Full House"
-if(Object.values(suitCount).includes(5)) return "Flush"
-if(values.includes(3)) return "Three of a Kind"
-
-let pairs=values.filter(v=>v==2).length
-
-if(pairs>=2) return "Two Pair"
-if(pairs==1) return "Pair"
-
-return "High Card"
+function test(){
+document.getElementById("result").innerHTML="JavaScript is working.";
 }
-
-function simulate(){
-
-let handInput=document.getElementById("hand").value.trim()
-let flopInput=document.getElementById("flop").value.trim()
-let turnInput=document.getElementById("turn").value.trim()
-let riverInput=document.getElementById("river").value.trim()
-
-if(!handInput){
-document.getElementById("equity").innerHTML="Enter your cards"
-return
-}
-
-let hand=handInput.split(" ")
-
-let flop=flopInput? flopInput.split(" ") : []
-let turn=turnInput? [turnInput] : []
-let river=riverInput? [riverInput] : []
-
-let cards=[...hand,...flop,...turn,...river]
-
-let strength=evaluateHand(cards)
-
-let advice="FOLD"
-
-if(strength=="Four of a Kind") advice="RAISE BIG"
-else if(strength=="Full House") advice="RAISE"
-else if(strength=="Flush") advice="RAISE"
-else if(strength=="Three of a Kind") advice="CALL"
-else if(strength=="Two Pair") advice="CALL"
-else if(strength=="Pair") advice="CHECK/CALL"
-
-document.getElementById("equity").innerHTML="Hand Strength: "+strength
-document.getElementById("advice").innerHTML="Recommended Move: "+advice
-
-}
-
 </script>
+
+</body>
+</html>
