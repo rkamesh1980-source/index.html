@@ -2,22 +2,112 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Poker AI</title>
+<title>Poker AI Advisor</title>
+
+<style>
+body{
+font-family:Arial;
+background:#0a3d2f;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.card{
+background:#135c46;
+padding:20px;
+border-radius:10px;
+margin-top:20px;
+}
+
+input{
+padding:10px;
+margin:8px;
+width:200px;
+border-radius:6px;
+border:none;
+}
+
+button{
+padding:12px 25px;
+background:#ffd000;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+}
+
+.result{
+margin-top:20px;
+font-size:20px;
+font-weight:bold;
+}
+</style>
 </head>
 
-<body style="font-family:Arial;text-align:center;margin-top:50px;">
+<body>
 
-<h1>Poker AI Running</h1>
-<p>Your deployment is working.</p>
+<h1>♠ Poker AI Advisor</h1>
 
-<button onclick="test()">Test Button</button>
+<div class="card">
 
-<p id="result"></p>
+<div>
+<label>Your Cards</label><br>
+<input id="hand" placeholder="Ah Kh">
+</div>
+
+<div>
+<label>Flop</label><br>
+<input id="flop" placeholder="Qs Jh 2d">
+</div>
+
+<div>
+<label>Turn</label><br>
+<input id="turn" placeholder="9c">
+</div>
+
+<div>
+<label>River</label><br>
+<input id="river" placeholder="optional">
+</div>
+
+<button onclick="analyze()">Analyze Hand</button>
+
+<div class="result" id="strength"></div>
+<div class="result" id="advice"></div>
+
+</div>
 
 <script>
-function test(){
-document.getElementById("result").innerHTML="JavaScript is working.";
+
+function analyze(){
+
+let hand=document.getElementById("hand").value.trim()
+let flop=document.getElementById("flop").value.trim()
+
+if(!hand || !flop){
+document.getElementById("strength").innerHTML="Enter your cards and flop"
+return
 }
+
+let cards=(hand+" "+flop).toUpperCase()
+
+let advice="FOLD"
+
+if(cards.includes("AA") || cards.includes("KK") || cards.includes("QQ"))
+advice="RAISE"
+
+else if(cards.includes("AK") || cards.includes("AQ"))
+advice="CALL or RAISE"
+
+else
+advice="CHECK or FOLD"
+
+document.getElementById("strength").innerHTML="Cards Entered: "+cards
+document.getElementById("advice").innerHTML="Suggested Move: "+advice
+
+}
+
 </script>
 
 </body>
